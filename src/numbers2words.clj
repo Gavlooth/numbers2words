@@ -1,24 +1,24 @@
 (ns numbers2words)
 
 
-(def single-digit-numerals ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",])
+(def ^:private single-digit-numerals ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",])
 
 
-(def tenthy-numerals
+(def ^:private  tenthy-numerals
   (let  [numerals ["Ten", "Eleven","Twelve","Thirteen", "Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"]]
    (fn [numeral]
     (-> numeral (mod 10)  (numerals)))))
 
 
-(def double-digit-no-tenty-numerals
+(def ^:private double-digit-no-tenty-numerals
   (let [numerals  ["Twenty", "Thirty","Fourty", "Fifty","Sixty", "Seventy","Eighty","Ninty"]]
      (fn [numeral]
        (-> numeral  (- 2) (numerals)))))
 
 
-(def power-of-ten-numeral      [ "Hundred", "Thousand", "Millions",])
+(def ^:private power-of-ten-numeral      [ "Hundred", "Thousand", "Millions",])
 
-(defn make-appender [string-builder]
+(defn make-appender- [string-builder]
  (partial (comp (partial (memfn ^String append word) string-builder) str) \space))
 
 
@@ -28,7 +28,7 @@
 (defn number->words*
   ([the-number] (number->words* the-number true))
   ( [the-number has-and?]
-    (let  [words (StringBuilder.) append (make-appender words)]
+    (let  [words (StringBuilder.) append (make-appender- words)]
      (loop [ numeral  the-number]
       (cond
         (and (>= numeral 0)       (< numeral 10))         (append  (single-digit-numerals numeral))
@@ -49,7 +49,7 @@
      (str (.delete words 0 1)))))
 
 (defn number->words  [the-number]
- (let  [words (StringBuilder.) append (make-appender words)]
+ (let  [words (StringBuilder.) append (make-appender- words)]
   (loop [ numeral  the-number]
    (cond
     (< numeral 1000)                                    (append (number->words* numeral))
